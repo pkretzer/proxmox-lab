@@ -1,0 +1,96 @@
+- name: Create Lab KVM machines
+  hosts: kvm
+  gather_facts: false
+  
+  tasks:
+    - name: "Clone kvm"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        clone: "{{ item.clone | default (proxmox_kvm_clone_default_template) }}"
+        name: "{{ item.name }}"
+        storage: "{{ item.storage | default (proxmox_kvm_clone_storage) }}"
+        format: "{{ item.diskformat | default (proxmox_kvm_clone_diskformat) }}"
+        newid: "{{ item.vmid | default (omit) }}"
+        timeout: "{{ proxmox_task_timeout }}"
+      loop: "{{ proxmox_kvm_clone }}"
+      delegate_to: localhost
+    
+    - name: "Update cloned kvm via vmid"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        ipconfig:
+          ipconfig0: "{{ item.ipconfig | default (proxmox_kvm_ipconfig) }}"
+        ciuser: "{{ item.ciuser | default (omit) }}"
+        cipassword: "{{ item.cipassword | default (proxmox_kvm_cipassword) }}"
+        description: "{{ item.description | default (proxmox_kvm_description) }}"
+        nameservers: "{{ item.nameservers | default (omit) }}"
+        sshkeys: "{{ item.pubkey | default (omit) }}"
+        searchdomains: "{{ item.searchdomain | default (omit) }}"
+        ciupgrade: "{{ item.ciupgrade | default (proxmox_kvm_ciupgrade) }}"
+        sockets: "{{ item.sockets | default (omit) }}"
+        vcpus: "{{ item.vcpus | default (omit) }}"
+        memory: "{{ item.memory | default (omit) }}"
+        update: true
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+
+    - name: "Update cloned kvm via hostname"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        name: "{{ item.name }}"
+        ipconfig:
+          ipconfig0: "{{ item.ipconfig | default (proxmox_kvm_ipconfig) }}"
+        ciuser: "{{ item.ciuser | default (omit) }}"
+        cipassword: "{{ item.cipassword | default (proxmox_kvm_cipassword) }}"
+        description: "{{ item.description | default (proxmox_kvm_description) }}"
+        nameservers: "{{ item.nameservers | default (omit) }}"
+        sshkeys: "{{ item.pubkey | default (omit) }}"
+        searchdomains: "{{ item.searchdomain | default (omit) }}"
+        ciupgrade: "{{ item.ciupgrade | default (proxmox_kvm_ciupgrade) }}"
+        sockets: "{{ item.sockets | default (omit) }}"
+        vcpus: "{{ item.vcpus | default (omit) }}"
+        memory: "{{ item.memory | default (omit) }}"
+        update: true
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is undefined
+      delegate_to: localhost
+    
+    - name: "Start cloned kvm via vmid"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        state: started
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+    
+    - name: "Start cloned kvm via hostname"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        name: "{{ item.name }}"
+        state: started
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is undefined
+      delegate_to: localhost

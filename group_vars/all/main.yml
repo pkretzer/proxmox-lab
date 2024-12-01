@@ -1,0 +1,10 @@
+---
+
+# defaults
+
+## Host
+proxmox_host: xxx.xxx.xxx.xxx
+proxmox_api_user: root@pam
+proxmox_api_token_id: ansible
+proxmox_node: pve1
+proxmox_task_timeout: 600

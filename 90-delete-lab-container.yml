@@ -1,0 +1,112 @@
+- name: Remove Lab Container
+  hosts: container
+  gather_facts: false
+
+  tasks:
+    - name: "Stop cloned container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        state: stopped
+      loop: "{{ proxmox_container_clone }}"
+      when: item.state == "absent" and item.vmid is defined
+      delegate_to: localhost
+    
+    - name: "Stop created container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        state: stopped
+      loop: "{{ proxmox_container_create }}"
+      when: item.state == "absent" and item.vmid is defined
+      delegate_to: localhost
+
+    - name: "Stop cloned container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: stopped
+      loop: "{{ proxmox_container_clone }}"
+      when: item.state == "absent" and item.vmid is undefined
+      delegate_to: localhost
+    
+    - name: "Stop created container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: stopped
+      loop: "{{ proxmox_container_create }}"
+      when: item.state == "absent" and item.vmid is undefined
+      delegate_to: localhost
+
+    - name: "Remove cloned container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item. vmid }}"
+        state: absent
+        purge: true
+      loop: "{{ proxmox_container_clone }}"
+      when: item.state == "absent" and item.vmid is defined
+      delegate_to: localhost
+    
+    - name: "Remove created container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item. vmid }}"
+        state: absent
+        purge: true
+      loop: "{{ proxmox_container_create }}"
+      when: item.state == "absent" and item.vmid is defined
+      delegate_to: localhost
+
+    - name: "Remove cloned container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: absent
+        purge: true
+      loop: "{{ proxmox_container_clone }}"
+      when: item.state == "absent" and item.vmid is undefined
+      delegate_to: localhost
+
+    - name: "Remove created container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: absent
+        purge: true
+      loop: "{{ proxmox_container_create }}"
+      when: item.state == "absent" and item.vmid is undefined
+      delegate_to: localhost

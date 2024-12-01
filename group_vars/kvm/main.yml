@@ -1,0 +1,98 @@
+---
+
+# KVM
+## Cloud-Init - Set default Cloud-Init parameter
+proxmox_kvm_ciupgrade: true
+proxmox_kvm_ipconfig: "ip=dhcp"
+proxmox_kvm_cipassword: "secretpw"
+proxmox_kvm_description: "created via ansible"
+
+## Clones - Set default parameter for cloned KVM
+proxmox_kvm_clone_storage: "mystorage"
+proxmox_kvm_clone_default_template: "VM-Template" # Needs to be an hostname
+proxmox_kvm_clone_diskformat: "raw"
+
+######################################################################
+
+proxmox_kvm_clone: []
+
+# proxmox_kvm_clone:
+
+# Just clone the KVM template
+#   - name: "kvm-clone-defaulthostname-dhcp"
+#     state: absent
+
+# Clone the KVM template and set vmid
+#   - name: "kvm-clone-vmid"
+#     state: absent
+#     vmid: 350
+
+# Clone the KVM template and set target storage
+#   - name: "kvm-clone-storage"
+#     state: absent
+#     storage: "zfs-mirror"
+
+# Clone the KVM template and configure networking via Cloud-Init
+#   - name: "kvm-clone-static-ip"
+#     state: absent
+#     ipconfig: "ip=192.168.1.3/24,gw=192.168.1.254"
+
+# Clone custom KVM template
+#   - name: "kvm-clone-different-template"
+#     state: absent
+#     clone: "custom-template"
+
+# Clone the KVM template and set password for default user via Cloud-Init
+#   - name: "kvm-create-password"
+#     state: absent
+#     cipassword: "AwesomePW!"
+
+# Clone the KVM template and set user and password via Cloud-Init
+#   - name: "kvm-create-user-password"
+#     state: absent
+#     ciuser: testus
+#     cipassword: "AwesomePW!"
+
+# Clone the KVM template and set a description
+#   - name: "kvm-create-description"
+#     state: absent
+#     description: "awesome"
+
+# Clone the KVM  template and set ssh public-key via Cloud-Init
+#   - name: "kvm-create-pubkey"
+#     state: absent
+#     pubkey: "mypubkey"
+
+# Clone the KVM template and set package update to false via Cloud-Init
+#   - name: "kvm-create-update-packages"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     ciupgrade: false
+
+# Clone the KVM template and change the cpu configuration
+#   - name: "kvm-create-cpu"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     sockets: 1
+#     vcpus: 2
+
+# Clone the KVM template and change the memory configuration
+#   - name: "kvm-create-memory"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     memory: 1024
+
+
+# Not working
+
+# Clone the KVM template and change the nameserver via Cloud-Init
+# - name: "kvm-create-nameserver" #not working
+#   state: absent
+#   ipconfig: "ip=192.168.1.10/24,gw=192.168.1.254"
+#   nameservers: "1.1.1.1"
+
+# Clone the KVM template and change the searchdomain via Cloud-Init
+# - name: "kvm-create-searchdomain" #not working
+#   state: absent
+#   ipconfig: "ip=192.168.1.11/24,gw=192.168.1.254"
+#   searchdomain: "test.kretzerio.de"

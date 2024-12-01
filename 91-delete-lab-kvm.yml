@@ -1,0 +1,56 @@
+- name: Remove Lab KVM
+  hosts: kvm
+  gather_facts: false
+
+  tasks:
+    - name: "Stop cloned kvm via vmid"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        state: stopped
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+    
+    - name: "Stop cloned kvm via hostname"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        name: "{{ item.name }}"
+        state: stopped
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is undefined
+      delegate_to: localhost
+    
+    - name: "Remove cloned kvm via vmid"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid }}"
+        state: absent
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is defined and item.state == "absent"
+      delegate_to: localhost
+    
+    - name: "Remove cloned kvm via hostname"
+      community.general.proxmox_kvm:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        name: "{{ item.name }}"
+        state: absent
+      loop: "{{ proxmox_kvm_clone }}"
+      when: item.vmid is undefined and item.state == "absent"
+      delegate_to: localhost

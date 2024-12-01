@@ -1,0 +1,143 @@
+---
+
+# LXC - Set default parameters for new container
+
+## Clone - Set default parameters for cloned container
+proxmox_container_clone_storage: "mystorage"
+proxmox_container_clone_default_template: 115 # needs to be an vmid
+
+## Create - Set default parameter for newly created container
+proxmox_container_password: "secretpw"
+proxmox_container_nameserver: 9.9.9.9
+proxmox_container_storage: 'mystorage:8'
+proxmox_container_pool: lab
+proxmox_container_cores: 1
+proxmox_container_cpus: 1
+proxmox_container_memory: 512
+proxmox_container_description: "created via ansible"
+proxmox_container_ostemplate: 'mystorage:vztmpl/debian-12-standard_12.2-1_amd64.tar.zst'
+
+######################################################################
+
+# Custom
+proxmox_container_clone: []
+
+# proxmox_container_clone:
+
+# Just clone the template and set DHCP
+#   - name: "container-clone-defaulthostname-dhcp"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Clone the template and set specific vmid
+#   - name: "container-clone-vmid"
+#     state: absent
+#     vmid: 350
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Clone the template and set specific target storage
+#   - name: "container-clone-storage"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     storage: "zfs-mirror"
+
+# Clone specific template
+#   - name: "container-clone-different-template"
+#     state: absent
+#     clone: 201
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Not working
+
+# Clone the template and set static ip
+#   - name: "container-clone-static-ip"
+#     state: absent
+#     netif: "name=eth0,gw=192.168.1.254,ip=192.168.1.1/24,tag=11,bridge=vmbr0"
+
+
+proxmox_container_create: []
+
+# proxmox_container_create:
+
+# Create container and set dhcp
+#   - name: "container-create-defaulthostname-dhcp"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Create container and set vmid
+#   - name: "container-create-vmid"
+#     state: absent
+#     vmid: 351
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Create container and set target storage
+#   - name: "container-create-storage"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     storage: "zfs-mirror:16"
+
+# Create container and set static ip with vlan tag
+#   - name: "container-create-static-ip-with-vlan"
+#     state: absent
+#     netif: "name=eth0,gw=192.168.1.254,ip=192.168.1.2/24,tag=11,bridge=vmbr0"
+
+# Create container and use specific os template
+#   - name: "container-create-template"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     ostemplate: "NFS-NAS:vztmpl/almalinux-9-default_20221108_amd64.tar.xz"
+
+# Create container and set password
+#   - name: "container-create-password"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     password: "AwesomePW!"
+
+# Create container and set description
+#   - name: "container-create-description"
+#     state: absent
+#     description: "awesome"
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+
+# Create container and assign pool
+#   - name: "container-create-pool"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     pool: "DHCP"
+
+# Create container and set nameserver ip
+#   - name: "container-create-nameserver"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     nameserver: "1.1.1.1"
+
+# Create container and set public key
+#   - name: "container-create-pubkey"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     pubkey: "mypubkey"
+
+# Create container and set searchdomain
+#   - name: "container-create-searchdomain"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     searchdomain: "test.kretzerio.de"
+
+# Create container and set swap size
+#   - name: "container-create-swap"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     swap: 1024
+
+# Create container and set cpu configuration
+#   - name: "container-create-cpu"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     cpus: 4
+#     cores: 2
+
+# Create container and set memory size
+#   - name: "container-create-memory"
+#     state: absent
+#     netif: "name=eth0,ip=dhcp,tag=11,bridge=vmbr0"
+#     memory: 1024

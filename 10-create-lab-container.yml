@@ -1,0 +1,132 @@
+- name: Create Lab Container
+  hosts: container
+  gather_facts: false
+  
+  tasks:
+    - name: "Clone container"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        vmid: "{{ item.vmid | default (omit) }}"
+        clone: "{{ item.clone | default (proxmox_container_clone_default_template) }}"
+        clone_type: "{{ item.clone_type | default('full') }}"
+        storage: "{{ item.storage | default (proxmox_container_clone_storage) }}"
+        timeout: "{{ proxmox_task_timeout }}"
+      loop: "{{ proxmox_container_clone }}"
+      delegate_to: localhost
+    
+    - name: "Update clone container configuration via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        vmid: "{{ item.vmid }}"
+        netif:
+          net0: "{{ item.netif }}"
+        update: true
+      loop: "{{ proxmox_container_clone }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+    
+    - name: "Update clone container configuration via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        netif:
+          net0: "{{ item.netif }}"
+        update: true
+      loop: "{{ proxmox_container_clone }}"
+      when: item.vmid is undefined
+      delegate_to: localhost
+ 
+    - name: "Create container"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        password: "{{ item.password | default (proxmox_container_password) }}"
+        vmid: "{{ item.vmid | default(omit) }}"
+        ostemplate: "{{ item.ostemplate | default (proxmox_container_ostemplate) }}"
+        description: "{{ item.description | default (proxmox_container_description) }}"
+        disk: "{{ item.storage | default (proxmox_container_storage) }}"
+        netif:
+          net0: "{{ item.netif }}"
+        nameserver: "{{ item.nameserver | default (proxmox_container_nameserver) }}"
+        cpus: "{{ item.cpus | default (proxmox_container_cpus) }}"
+        cores: "{{ item.cores | default (proxmox_container_cores) }}"
+        features:
+          - nesting=1
+        pool: "{{ item.pool | default (proxmox_container_pool) }}"
+        timeout: "{{ proxmox_task_timeout }}"
+        pubkey: "{{ item.pubkey | default (omit) }}"
+        searchdomain: "{{ item.searchdomain | default (omit) }}"
+        memory: "{{ item.memory | default (proxmox_container_memory) }}"
+        swap: "{{ item.swap | default (omit) }}"
+      loop: "{{ proxmox_container_create }}"
+      delegate_to: localhost
+
+    - name: "Start cloned container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid | default(omit) }}"
+        state: started
+      loop: "{{ proxmox_container_clone }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+
+    - name: "Start cloned container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: started
+      loop: "{{ proxmox_container_clone }}"
+      when: item.vmid is undefined
+      delegate_to: localhost
+    
+    - name: "Start created container via vmid"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        vmid: "{{ item.vmid | default(omit) }}"
+        state: started
+      loop: "{{ proxmox_container_create }}"
+      when: item.vmid is defined
+      delegate_to: localhost
+
+    - name: "Start created container via hostname"
+      community.general.proxmox:
+        api_host: "{{ proxmox_host }}"
+        api_user: "{{ proxmox_api_user }}"
+        api_token_id: "{{ proxmox_api_token_id }}"
+        api_token_secret: "{{ proxmox_api_secret }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ item.name }}"
+        state: started
+      loop: "{{ proxmox_container_create }}"
+      when: item.vmid is undefined
+      delegate_to: localhost
